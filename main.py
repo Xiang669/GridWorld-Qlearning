@@ -14,12 +14,11 @@ def train():
     for episode in range(num_episodes):
         state = env.reset()
         state_index = agent.state_to_index(state)
-        done = False
         total_reward = 0
 
-        while not done:
+        while not env.done:
             action = agent.choose_action_with_exploration(state_index)
-            next_state, reward, done = env.step(action)
+            next_state, reward, env.done = env.step(action)
             next_state_index = agent.state_to_index(next_state)
 
             agent.update_q_value(state_index, action, reward, next_state_index)
@@ -29,19 +28,18 @@ def train():
 
         returns.append(total_reward)
 
-    print("Q-Table:")
-    print(agent.q_table)
+    #print("Q-Table:")
+    #print(agent.q_table)
     return agent.get_policy(),returns
         
         
 
-
+# turn the action index to an arrow for visualization
 ARROWS={0: "↑", 1: "↓", 2: "←", 3: "→"}
 
 def main():
     policy, returns = train()
     print("Learned Policy:")
-    state_and_action = policy.items()
     for i in range(environment.GridWorld.ROWS):
         for j in range(environment.GridWorld.COLS):
             state_index = i * environment.GridWorld.COLS + j
